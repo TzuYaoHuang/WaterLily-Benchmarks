@@ -1,12 +1,23 @@
 using WaterLily
 using StaticArrays
 
-function tgv(p, backend; Re=1600, T=Float32)
+function tgv(p, backend; Re=Inf, T=Float32)
     L = 2^p; U = T(1); κ=T(π/L); ν = T(1/(κ*Re))
     function uλ(i,xyz)
         x,y,z = @. xyz*κ
         i==1 && return -U*sin(x)*cos(y)*cos(z)
         i==2 && return  U*cos(x)*sin(y)*cos(z)
+        return 0*U
+    end
+    Simulation((L, L, L), (0, 0, 0), 1/κ; U, uλ, ν, T, mem=backend)
+end
+
+function tgvpert(p, backend; Re=Inf, T=Float32)
+    L = 2^p; U = T(1); κ=T(π/L); ν = T(1/(κ*Re))
+    function uλ(i,xyz)
+        x,y,z = @. xyz*κ
+        i==1 && return -U*(sin(x)*cos(y)*cos(z)+4sin(6x)*cos(6y)*cos(6z)/5)
+        i==2 && return  U*(cos(x)*sin(y)*cos(z)+4cos(6x)*sin(6y)*cos(6z)/5)
         return 0*U
     end
     Simulation((L, L, L), (0, 0, 0), 1/κ; U, uλ, ν, T, mem=backend)
