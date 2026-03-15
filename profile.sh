@@ -20,7 +20,7 @@ waterlily_version () {
 ## Grep current julia version
 waterlily_profile_branch () {
     cd $WATERLILY_DIR
-    git checkout profiling
+    # git checkout profiling
     julia --project -e "using Pkg; Pkg.update();"
     cd $THIS_DIR
 }
